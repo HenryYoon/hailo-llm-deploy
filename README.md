@@ -16,6 +16,9 @@ LoRA fine-tuning of Qwen2.5-3B for Korean legal QA using Unsloth with 4-bit quan
 
 <img src="docs/result_trial1.png" width="80%">
 
+## Data Reference
+
+- [jihye-moon/klac_legal_aid_counseling](https://huggingface.co/datasets/jihye-moon/klac_legal_aid_counseling)
 
 ## Inference Snippet
 ```python
