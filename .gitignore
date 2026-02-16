@@ -1,0 +1,14 @@
+venv/
+unsloth_compiled_cache/
+Sample/
+models/
+prd.md
+.*/
+*.whl
+hailo_ai_sw_suite/
+*.log
+*.pyc
+.install_logs/
+infra/
+data/
+__pycache__/
