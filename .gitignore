@@ -12,3 +12,6 @@ hailo_ai_sw_suite/
 infra/
 data/
 __pycache__/
+notebooks/
+.env
+memo.md

@@ -1,0 +1,16 @@
+{
+  "trial": 1,
+  "model": "/mnt/d/yunihg/coding/legal-chatbot/models/merged/stage1_16bit",
+  "prompt_format": "alpaca",
+  "test_samples": 100,
+  "rouge_l": {
+    "rouge_l_precision": 0.20596706092779946,
+    "rouge_l_recall": 0.13096582293408918,
+    "rouge_l_f1": 0.12764866427021526
+  },
+  "bertscore": {
+    "bertscore_precision": 0.6487180590629578,
+    "bertscore_recall": 0.6516093611717224,
+    "bertscore_f1": 0.6484375
+  }
+}

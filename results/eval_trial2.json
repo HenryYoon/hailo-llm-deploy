@@ -1,0 +1,16 @@
+{
+  "trial": 2,
+  "model": "/mnt/d/yunihg/coding/legal-chatbot/models/merged/trial2",
+  "prompt_format": "chatml",
+  "test_samples": 100,
+  "rouge_l": {
+    "rouge_l_precision": 0.27755796925983384,
+    "rouge_l_recall": 0.25984317904844045,
+    "rouge_l_f1": 0.22012352351735107
+  },
+  "bertscore": {
+    "bertscore_precision": 0.6978776454925537,
+    "bertscore_recall": 0.6933696866035461,
+    "bertscore_f1": 0.6946392059326172
+  }
+}
