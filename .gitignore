@@ -10,8 +10,7 @@ hailo_ai_sw_suite/
 *.pyc
 .install_logs/
 infra/
-data/
 __pycache__/
+data/external
 notebooks/
 .env
-memo.md
