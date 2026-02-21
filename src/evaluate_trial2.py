@@ -145,23 +145,24 @@ def compute_bertscore(predictions: list[str], references: list[str]) -> dict:
 
 def llm_judge_score(
     question: str, reference: str, prediction: str, client
-) -> dict:
+    ) -> dict:
     """Use GPT as a judge to evaluate the prediction quality."""
+    
     prompt = f"""당신은 한국 법률 QA 모델의 답변 품질을 평가하는 전문 평가관입니다.
-아래의 질문, 정답, 모델 답변을 보고 3가지 기준으로 1~5점 척도로 채점하세요.
+    아래의 질문, 정답, 모델 답변을 보고 3가지 기준으로 1~5점 척도로 채점하세요.
 
-## 평가 기준
-1. **정확성** (Correctness): 법률적 사실이 정답과 일치하는가
-2. **완전성** (Completeness): 정답의 핵심 내용을 빠짐없이 다루는가
-3. **충실도** (Faithfulness): 제공된 문서에 근거한 답변인가 (환각 여부)
+    ## 평가 기준
+    1. **정확성** (Correctness): 법률적 사실이 정답과 일치하는가
+    2. **완전성** (Completeness): 정답의 핵심 내용을 빠짐없이 다루는가
+    3. **충실도** (Faithfulness): 제공된 문서에 근거한 답변인가 (환각 여부)
 
-## 입력
-**질문**: {question}
-**정답**: {reference}
-**모델 답변**: {prediction}
+    ## 입력
+    **질문**: {question}
+    **정답**: {reference}
+    **모델 답변**: {prediction}
 
-## 출력 (반드시 아래 JSON 형식으로만 답하세요)
-{{"correctness": <1-5>, "completeness": <1-5>, "faithfulness": <1-5>, "reason": "<한 줄 평가 근거>"}}"""
+    ## 출력 (반드시 아래 JSON 형식으로만 답하세요)
+    {{"correctness": <1-5>, "completeness": <1-5>, "faithfulness": <1-5>, "reason": "<한 줄 평가 근거>"}}"""
 
     response = client.chat.completions.create(
         model="openai/gpt-4o-mini",
