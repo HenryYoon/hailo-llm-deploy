@@ -1,16 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
 venv/
+
+# IDE / OS
+.*/
+!.gitignore
+!.env.example
+
+# Project-specific
 unsloth_compiled_cache/
 Sample/
 models/
 prd.md
-.*/
 *.whl
 hailo_ai_sw_suite/
 *.log
-*.pyc
 .install_logs/
 infra/
-__pycache__/
 data/external
 notebooks/
 .env

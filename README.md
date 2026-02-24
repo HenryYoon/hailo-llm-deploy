@@ -1,19 +1,64 @@
-# legal-chatbot
-LoRA fine-tuning of Qwen2.5-3B for Korean legal QA using Unsloth with 4-bit quantized training.
+# hailo-llm-deploy
 
-## Progress
-- Completed model training and export to ONNX.
-- Failed to compile ONNX to HAR using Hailo Dataflow Compiler (DFC), a prerequisite step before compiling HAR to HEF.
+HuggingFace LLM fine-tuning and Hailo NPU edge deployment pipeline.
+
+> Refactored from [legal-chatbot](https://github.com/HenryYoon/legal-chatbot) — Korean legal QA with RAFT fine-tuning.
+
+## Project Structure
+
+```
+hailo_llm_deploy/          # Generic pipeline package
+├── cli.py                 # Typer CLI (hailo-llm-deploy)
+├── config.py              # Pydantic config (YAML)
+├── finetune.py            # FineTuner — LoRA fine-tuning
+├── export.py              # ModelExporter — ONNX export
+└── evaluate.py            # Evaluator — ROUGE-L, BERTScore, LLM Judge
+
+examples/korean-legal/     # Domain-specific example
+├── construct.py           # 5-step RAFT pipeline orchestrator
+├── sampler.py             # Sampler — stratified sampling
+├── extractor.py           # ReferenceExtractor — legal citation extraction
+├── collector.py           # LawApiCollector — law API data collection
+├── chunker.py             # DocumentChunker — document chunking
+├── raft_builder.py        # RaftBuilder — RAFT dataset assembly
+└── convert_formal.py      # FormalConverter — style conversion via LLM
+
+configs/                   # YAML configuration files
+├── default.yaml
+└── examples/
+    └── korean_legal.yaml
+```
+
+## Installation
+
+```bash
+pip install -e .
+```
+
+## Usage
+
+```bash
+# Fine-tune
+hailo-llm-deploy finetune --config configs/examples/korean_legal.yaml
+
+# Export to ONNX
+hailo-llm-deploy export --model models/merged/trial2.1 --output models/onnx/trial2.1
+
+# Evaluate
+hailo-llm-deploy evaluate --config configs/examples/korean_legal.yaml
+```
 
 ## TODO
+
 - [X] Curate data and reform response format
 - [X] Construct RAFT data (statutes and judgment)
-- [X] Train LoRA adapter in Qwen2-1.5b-instruct
-- [ ] Combine LoRA adapter and pre-compiled model file (HAR) and compile with DFC
+- [X] Train LoRA adapter (Qwen2.5-1.5B-Instruct)
+- [X] Refactor codebase (class-based, domain/generic separation)
+- [ ] Combine LoRA adapter with pre-compiled HAR and compile with DFC
+- [ ] CLI wrapping (Phase 2)
+- [ ] Hailo pipeline integration (Phase 3)
 
-## Result
-
-* The score may not be related to output quality.
+## Evaluation Results
 
 Metric | Trial 1 | Trial 2 | Trial 2-1|
 -----------|:-------:|:-------:|:-------:|
@@ -31,3 +76,6 @@ LLM-as-a-Judge Faithfulness|2.69|2.31|**3.27**|
 
 - [jihye-moon/klac_legal_aid_counseling](https://huggingface.co/datasets/jihye-moon/klac_legal_aid_counseling)
 
+## License
+
+Apache-2.0
