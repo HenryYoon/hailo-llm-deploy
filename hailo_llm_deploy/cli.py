@@ -85,5 +85,96 @@ def evaluate(
     evaluator.print_results(all_results)
 
 
+@app.command()
+def compile(
+    config: Path = typer.Option(..., "--config", "-c", help="Path to YAML config file"),
+    har: Path = typer.Option(None, "--har", help="Path to pre-optimized HAR file"),
+    alls: Path = typer.Option(None, "--alls", help="Path to ALLS model script"),
+    lora: Path = typer.Option(None, "--lora", help="Path to LoRA safetensors weights"),
+    output_dir: Path = typer.Option(None, "--output-dir", "-o", help="Output directory"),
+    output_name: str = typer.Option(None, "--output-name", help="Base name for output files"),
+    force: bool = typer.Option(False, "--force", help="Skip HAR availability warning"),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+):
+    """Compile LoRA adapter with pre-optimized HAR for Hailo NPU."""
+    _setup_logging(verbose)
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+
+    if not force:
+        console.print(Panel(
+            "[bold]Hailo GenAI HAR files are not yet publicly available.[/bold]\n\n"
+            "The GenAI Model Zoo distributes HEF (compiled binary) only.\n"
+            "LoRA compilation requires pre-optimized HAR files, which Hailo\n"
+            "has not released to end-users as of 2026-02.\n\n"
+            "To proceed, you need:\n"
+            "  1. Contact Hailo for enterprise/partner HAR access, or\n"
+            "  2. Wait for public release of GenAI LoRA tooling\n\n"
+            "Use --force to skip this warning.\n"
+            "See: docs/hailo-lora-guide.md for details.",
+            title="[yellow]Blocked: HAR Files Unavailable[/yellow]",
+            border_style="yellow",
+        ))
+        raise typer.Exit(1)
+
+    cfg = PipelineConfig.from_yaml(config)
+
+    if har:
+        cfg.compile.har_path = har
+    if alls:
+        cfg.compile.alls_path = alls
+    if lora:
+        cfg.compile.lora_weights_path = lora
+    if output_dir:
+        cfg.compile.output_dir = output_dir
+    if output_name:
+        cfg.compile.output_name = output_name
+
+    if not cfg.compile.har_path:
+        console.print(Panel(
+            "HAR file path is required. Provide it via:\n"
+            "  --har flag, or\n"
+            "  compile.har_path in YAML config\n\n"
+            "Download pre-optimized HARs from the Hailo GenAI Model Zoo.",
+            title="[red]Missing HAR Path[/red]",
+            border_style="red",
+        ))
+        raise typer.Exit(1)
+
+    if not cfg.compile.alls_path:
+        console.print(Panel(
+            "ALLS model script path is required. Provide it via:\n"
+            "  --alls flag, or\n"
+            "  compile.alls_path in YAML config\n\n"
+            "Download ALLS files from the Hailo GenAI Model Zoo.",
+            title="[red]Missing ALLS Path[/red]",
+            border_style="red",
+        ))
+        raise typer.Exit(1)
+
+    try:
+        from .compile import HailoCompiler
+    except ImportError as e:
+        console.print(Panel(
+            str(e),
+            title="[red]Missing Dependency[/red]",
+            border_style="red",
+        ))
+        raise typer.Exit(1)
+
+    compiler = HailoCompiler(cfg)
+    hef_path = compiler.run()
+
+    console.print(Panel(
+        f"HEF: {hef_path}\n"
+        f"HAR: {cfg.compile.output_dir / f'{cfg.compile.output_name}.compiled.har'}",
+        title="[green]Compilation Complete[/green]",
+        border_style="green",
+    ))
+
+
 if __name__ == "__main__":
     app()

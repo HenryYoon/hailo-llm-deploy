@@ -49,6 +49,19 @@ class ExportConfig(BaseModel):
     output_dir: Path = Path("./output")
 
 
+class CompileConfig(BaseModel):
+    """Hailo NPU compilation configuration."""
+    har_path: Path | None = None
+    alls_path: Path | None = None
+    hw_arch: str = "hailo10h"
+    adapter_name: str = "lora_adapter"
+    lora_weights_path: Path | None = None
+    calibration_data_path: Path | None = None
+    calibration_size: int = 64
+    output_dir: Path = Path("./models/compiled")
+    output_name: str = "model"
+
+
 class DeployConfig(BaseModel):
     target: str = "hailo-10h"
     port: int = 8000
@@ -77,6 +90,7 @@ class PipelineConfig(BaseModel):
     training: TrainingConfig = TrainingConfig()
     data: DataConfig = DataConfig()
     export: ExportConfig = ExportConfig()
+    compile: CompileConfig = CompileConfig()
     deploy: DeployConfig = DeployConfig()
     evaluate: EvaluateConfig = EvaluateConfig()
     output: OutputConfig = OutputConfig()

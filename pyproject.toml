@@ -19,6 +19,7 @@ dependencies = [
 [project.optional-dependencies]
 eval = ["rouge-score", "bert-score", "numpy"]
 export = ["optimum", "onnx", "onnxruntime"]
+hailo = ["numpy"]  # hailo_sdk_client must be installed via Hailo AI SW Suite
 dev = ["ruff", "pytest"]
 
 [project.scripts]
