@@ -40,6 +40,17 @@ export:
   dtype: float16
   output_dir: ./output
 
+compile:
+  har_path: null
+  alls_path: null
+  hw_arch: hailo10h
+  adapter_name: lora_adapter
+  lora_weights_path: null
+  calibration_data_path: null
+  calibration_size: 64
+  output_dir: ./models/compiled
+  output_name: model
+
 deploy:
   target: hailo-10h
   port: 8000

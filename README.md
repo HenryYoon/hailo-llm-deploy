@@ -2,7 +2,7 @@
 
 HuggingFace LLM fine-tuning and Hailo NPU edge deployment pipeline.
 
-> Refactored from [legal-chatbot](https://github.com/HenryYoon/legal-chatbot) — Korean legal QA with RAFT fine-tuning.
+> Refactored from legal-chatbot — Korean legal QA with RAFT fine-tuning.
 
 ## Project Structure
 
@@ -12,6 +12,7 @@ hailo_llm_deploy/          # Generic pipeline package
 ├── config.py              # Pydantic config (YAML)
 ├── finetune.py            # FineTuner — LoRA fine-tuning
 ├── export.py              # ModelExporter — ONNX export
+├── compile.py             # HailoCompiler — HAR + LoRA → HEF (blocked)
 └── evaluate.py            # Evaluator — ROUGE-L, BERTScore, LLM Judge
 
 examples/korean-legal/     # Domain-specific example
@@ -22,6 +23,10 @@ examples/korean-legal/     # Domain-specific example
 ├── chunker.py             # DocumentChunker — document chunking
 ├── raft_builder.py        # RaftBuilder — RAFT dataset assembly
 └── convert_formal.py      # FormalConverter — style conversion via LLM
+
+tests/                     # pytest test suite (69 tests)
+docs/                      # Documentation
+└── hailo-lora-guide.md    # Hailo LoRA compilation guide
 
 configs/                   # YAML configuration files
 ├── default.yaml
@@ -46,6 +51,9 @@ hailo-llm-deploy export --model models/merged/trial2.1 --output models/onnx/tria
 
 # Evaluate
 hailo-llm-deploy evaluate --config configs/examples/korean_legal.yaml
+
+# Compile for Hailo NPU (blocked — requires HAR files not yet publicly available)
+hailo-llm-deploy compile --config configs/examples/korean_legal.yaml --force
 ```
 
 ## TODO
@@ -54,9 +62,26 @@ hailo-llm-deploy evaluate --config configs/examples/korean_legal.yaml
 - [X] Construct RAFT data (statutes and judgment)
 - [X] Train LoRA adapter (Qwen2.5-1.5B-Instruct)
 - [X] Refactor codebase (class-based, domain/generic separation)
-- [ ] Combine LoRA adapter with pre-compiled HAR and compile with DFC
-- [ ] CLI wrapping (Phase 2)
-- [ ] Hailo pipeline integration (Phase 3)
+- [X] Add compile pipeline code (HAR + LoRA → HEF)
+- [X] Add test suite (69 tests)
+- [ ] Obtain Hailo GenAI HAR files (blocked — not publicly available as of 2026-02)
+- [ ] Compile LoRA adapter with HAR and deploy HEF to Hailo-10H
+
+## Known Limitations
+
+### Hailo NPU Compilation (Blocked)
+
+The compile pipeline (`hailo-llm-deploy compile`) requires pre-optimized HAR files
+from the Hailo GenAI Model Zoo. As of 2026-02, Hailo distributes only HEF (compiled
+binary), not HAR (intermediate representation). LoRA adapter attachment requires HAR.
+
+**Status**: Waiting for Hailo to release GenAI HAR files or LoRA compilation tools.
+See [docs/hailo-lora-guide.md](docs/hailo-lora-guide.md) for details.
+
+## Trial Details
+- Trial 1: Train model with full dataset in 1 epoch.
+- Trial 2: Train model with selected dataset in 1 epoch.
+- Trial 3: Train model with selected dataset in 10 epochs.
 
 ## Evaluation Results
 

@@ -40,6 +40,15 @@ export:
   dtype: float16
   output_dir: models/onnx/legal_ai
 
+compile:
+  har_path: models/hailo/qwen2_1.5b_instruct.q.har
+  alls_path: models/hailo/qwen2_1.5b_instruct.alls
+  hw_arch: hailo10h
+  adapter_name: korean_legal_lora
+  calibration_size: 64
+  output_dir: models/compiled/trial2.1
+  output_name: qwen2_1.5b_korean_legal
+
 evaluate:
   metrics:
     - rouge_l

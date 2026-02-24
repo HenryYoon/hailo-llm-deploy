@@ -9,13 +9,19 @@
 
 ---
 
-## 현재 코드베이스 분석 (trial2 merge 후)
+## 현재 코드베이스 분석
 
-### README 기록 사항 (main 브랜치)
+### Hailo NPU 블로커 (2026-02)
 
-- ONNX → HAR 컴파일 실패 기록됨 (Hailo DFC 단계에서 막힘)
-- TODO에 RAFT 데이터 구축, Qwen2-1.5B LoRA, LoRA + pre-compiled HAR 결합 항목 존재
-- trial3 브랜치가 local only로 존재하므로 이 TODO 진행 상태 확인 필요
+- GenAI Model Zoo는 HEF만 배포, HAR 미공개
+- `compile.py` 코드는 완성되었으나 HAR 없이 실행 불가
+- DFC GenAI LoRA 도구 미공개 (Hailo 내부/파트너 전용)
+- Hailo 직원 확인: "향후 LoRA 파인튜닝 지원 공개 계획" (시기 미정)
+
+### 컴파일 경로 이력
+
+- ONNX → HAR 컴파일 실패 → 해당 경로 폐기
+- pre-compiled HAR + LoRA 경로 채택 → HAR 미공개로 blocked
 
 ### 모델 체크포인트 현황 (gitignored)
 

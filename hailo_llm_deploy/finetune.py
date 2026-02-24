@@ -4,9 +4,9 @@ import logging
 from pathlib import Path
 
 import torch
+from unsloth import FastLanguageModel  # must be imported before trl
 from datasets import load_dataset
 from trl import SFTTrainer, SFTConfig
-from unsloth import FastLanguageModel
 
 from .config import PipelineConfig
 
@@ -87,13 +87,13 @@ class FineTuner:
 
         trainer = SFTTrainer(
             model=self.model,
-            tokenizer=self.tokenizer,
+            processing_class=self.tokenizer,
             train_dataset=dataset["train"],
             eval_dataset=dataset.get("validation"),
-            dataset_text_field="text",
-            max_seq_length=mc.max_seq_length,
-            packing=False,
             args=SFTConfig(
+                dataset_text_field="text",
+                packing=False,
+                eos_token=self.tokenizer.eos_token,
                 output_dir=checkpoint_dir,
                 num_train_epochs=tc.epochs,
                 per_device_train_batch_size=tc.batch_size,
