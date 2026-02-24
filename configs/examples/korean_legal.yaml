@@ -1,0 +1,58 @@
+model:
+  name: "Qwen/Qwen2.5-1.5B-Instruct"
+  max_seq_length: 2048
+  load_in_4bit: true
+
+lora:
+  r: 16
+  alpha: 16
+  dropout: 0
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  epochs: 10
+  batch_size: 2
+  gradient_accumulation: 4
+  learning_rate: 2e-4
+  warmup_ratio: 0.03
+  scheduler: cosine
+  weight_decay: 0.01
+  eval_steps: 50
+  save_steps: 50
+  seed: 42
+  prompt_format: chatml
+
+data:
+  train_path: data/processed/train_dataset.jsonl
+  val_path: data/processed/val_dataset.jsonl
+  test_path: data/processed/test_dataset.jsonl
+  instruction: "당신은 한국의 법률 전문가입니다. 아래 제공된 참고 문서를 바탕으로 질문에 답변해주세요."
+
+export:
+  format: onnx
+  dtype: float16
+  output_dir: models/onnx/legal_ai
+
+evaluate:
+  metrics:
+    - rouge_l
+    - bertscore
+  llm_judge: false
+  prompt_format: chatml
+  max_new_tokens: 512
+  temperature: 0.1
+  top_p: 0.9
+  repetition_penalty: 1.1
+
+output:
+  checkpoint_dir: models/checkpoints/trial2.1
+  lora_dir: models/lora_adapters/trial2.1
+  merged_dir: models/merged/trial2.1
+  results_dir: results
